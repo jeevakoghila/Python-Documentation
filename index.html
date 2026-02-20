@@ -1,0 +1,1936 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Python Documentation</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="/_sdk/element_sdk.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+              mono: ["JetBrains Mono", "monospace"],
+            },
+            colors: {
+              python: {
+                blue: "#306998",
+                yellow: "#FFD43B",
+                dark: "#1e3a5f",
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+
+      .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 0.6s ease-out,
+          transform 0.6s ease-out;
+      }
+
+      .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .code-block {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .code-block::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        animation: shimmer 3s infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          left: -100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+
+      .nav-item {
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .nav-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 3px;
+        height: 0;
+        background: #306998;
+        border-radius: 2px;
+        transition: height 0.3s ease;
+      }
+
+      .nav-item:hover::before,
+      .nav-item.active::before {
+        height: 100%;
+      }
+
+      .progress-bar {
+        transition: width 0.3s ease;
+      }
+
+      .card-hover {
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      .card-hover:hover {
+        transform: translateY(-4px);
+      }
+
+      .copy-btn {
+        transition: all 0.2s ease;
+      }
+
+      .copy-btn:hover {
+        transform: scale(1.1);
+      }
+
+      .hamburger-line {
+        transition: all 0.3s ease;
+      }
+
+      .menu-open .hamburger-line:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+
+      .menu-open .hamburger-line:nth-child(2) {
+        opacity: 0;
+      }
+
+      .menu-open .hamburger-line:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+      }
+
+      .sidebar-mobile {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar-mobile.open {
+        transform: translateX(0);
+      }
+
+      .theme-toggle {
+        transition: all 0.3s ease;
+      }
+
+      .search-input:focus {
+        box-shadow: 0 0 0 3px rgba(48, 105, 152, 0.3);
+      }
+
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+
+      .dark ::-webkit-scrollbar-track {
+        background: #1e293b;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #306998;
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #1e3a5f;
+      }
+    </style>
+  </head>
+  <body
+    class="h-full bg-gray-50 dark:bg-slate-900 font-sans text-gray-800 dark:text-gray-100 transition-colors duration-300"
+  >
+    <!-- Progress Bar -->
+    <div
+      class="fixed top-0 left-0 right-0 h-1 bg-gray-200 dark:bg-slate-700 z-50"
+    >
+      <div
+        id="progressBar"
+        class="progress-bar h-full bg-gradient-to-r from-python-blue to-python-yellow w-0"
+      ></div>
+    </div>
+
+    <!-- Mobile Header -->
+    <header
+      class="lg:hidden fixed top-1 left-0 right-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm z-40 border-b border-gray-200 dark:border-slate-700"
+    >
+      <div class="flex items-center justify-between px-4 py-3">
+        <button
+          id="hamburgerBtn"
+          class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
+        >
+          <div class="w-6 h-5 flex flex-col justify-between">
+            <span
+              class="hamburger-line w-full h-0.5 bg-gray-700 dark:bg-gray-200 rounded"
+            ></span>
+            <span
+              class="hamburger-line w-full h-0.5 bg-gray-700 dark:bg-gray-200 rounded"
+            ></span>
+            <span
+              class="hamburger-line w-full h-0.5 bg-gray-700 dark:bg-gray-200 rounded"
+            ></span>
+          </div>
+        </button>
+        <div class="flex items-center gap-2">
+          <svg class="w-8 h-8" viewBox="0 0 256 255" fill="none">
+            <path
+              d="M126.916.072c-64.832 0-60.784 28.115-60.784 28.115l.072 29.128h61.868v8.745H41.631S.145 61.355.145 126.77c0 65.417 36.21 63.097 36.21 63.097h21.61v-30.356s-1.165-36.21 35.632-36.21h61.362s34.475.557 34.475-33.319V33.97S194.67.072 126.916.072zM92.802 19.66a11.12 11.12 0 0 1 11.13 11.13 11.12 11.12 0 0 1-11.13 11.13 11.12 11.12 0 0 1-11.13-11.13 11.12 11.12 0 0 1 11.13-11.13z"
+              fill="#306998"
+            />
+            <path
+              d="M128.757 254.126c64.832 0 60.784-28.115 60.784-28.115l-.072-29.127H127.6v-8.746h86.441s41.486 4.705 41.486-60.712c0-65.416-36.21-63.096-36.21-63.096h-21.61v30.355s1.165 36.21-35.632 36.21h-61.362s-34.475-.557-34.475 33.32v56.013s-5.235 33.897 62.518 33.897zm34.114-19.586a11.12 11.12 0 0 1-11.13-11.13 11.12 11.12 0 0 1 11.13-11.132 11.12 11.12 0 0 1 11.13 11.131 11.12 11.12 0 0 1-11.13 11.13z"
+              fill="#FFD43B"
+            />
+          </svg>
+          <span id="mobileSiteTitle" class="font-bold text-lg"
+            >Python Docs</span
+          >
+        </div>
+        <button
+          id="themeToggleMobile"
+          class="theme-toggle p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700"
+        >
+          <svg
+            class="w-5 h-5 dark:hidden"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+            />
+          </svg>
+          <svg
+            class="w-5 h-5 hidden dark:block"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+            />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div
+      id="sidebarOverlay"
+      class="lg:hidden fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none transition-opacity duration-300"
+    ></div>
+
+    <!-- Sidebar -->
+    <aside
+      id="sidebar"
+      class="sidebar-mobile lg:translate-x-0 fixed left-0 top-0 lg:top-1 w-72 h-full bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 z-50 lg:z-30 overflow-y-auto"
+    >
+      <div class="p-6">
+        <!-- Logo -->
+        <div class="hidden lg:flex items-center gap-3 mb-8">
+          <svg class="w-10 h-10" viewBox="0 0 256 255" fill="none">
+            <path
+              d="M126.916.072c-64.832 0-60.784 28.115-60.784 28.115l.072 29.128h61.868v8.745H41.631S.145 61.355.145 126.77c0 65.417 36.21 63.097 36.21 63.097h21.61v-30.356s-1.165-36.21 35.632-36.21h61.362s34.475.557 34.475-33.319V33.97S194.67.072 126.916.072zM92.802 19.66a11.12 11.12 0 0 1 11.13 11.13 11.12 11.12 0 0 1-11.13 11.13 11.12 11.12 0 0 1-11.13-11.13 11.12 11.12 0 0 1 11.13-11.13z"
+              fill="#306998"
+            />
+            <path
+              d="M128.757 254.126c64.832 0 60.784-28.115 60.784-28.115l-.072-29.127H127.6v-8.746h86.441s41.486 4.705 41.486-60.712c0-65.416-36.21-63.096-36.21-63.096h-21.61v30.355s1.165 36.21-35.632 36.21h-61.362s-34.475-.557-34.475 33.32v56.013s-5.235 33.897 62.518 33.897zm34.114-19.586a11.12 11.12 0 0 1-11.13-11.13 11.12 11.12 0 0 1 11.13-11.132 11.12 11.12 0 0 1 11.13 11.131 11.12 11.12 0 0 1-11.13 11.13z"
+              fill="#FFD43B"
+            />
+          </svg>
+          <div>
+            <h1
+              id="siteTitle"
+              class="font-bold text-xl text-gray-900 dark:text-white"
+            >
+              Python Docs
+            </h1>
+            <span class="text-xs text-gray-500 dark:text-gray-400"
+              >v3.12 Documentation</span
+            >
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="relative mb-6 mt-16 lg:mt-0">
+          <svg
+            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+          <input
+            id="searchInput"
+            type="text"
+            placeholder="Search topics..."
+            class="search-input w-full pl-10 pr-4 py-2.5 bg-gray-100 dark:bg-slate-700 border-0 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-python-blue transition-all"
+          />
+        </div>
+
+        <!-- Theme Toggle Desktop -->
+        <div
+          class="hidden lg:flex items-center justify-between p-3 bg-gray-100 dark:bg-slate-700 rounded-xl mb-6"
+        >
+          <span class="text-sm font-medium">Dark Mode</span>
+          <button
+            id="themeToggleDesktop"
+            class="relative w-12 h-6 bg-gray-300 dark:bg-python-blue rounded-full transition-colors"
+          >
+            <span
+              class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transform dark:translate-x-6 transition-transform"
+            ></span>
+          </button>
+        </div>
+
+        <!-- Navigation -->
+        <nav id="navigation" class="space-y-1">
+          <a
+            href="#introduction"
+            class="nav-item active flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-python-blue dark:text-python-yellow bg-blue-50 dark:bg-slate-700"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            Introduction
+          </a>
+          <a
+            href="#hello-world"
+            class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            Hello World
+          </a>
+          <a
+            href="#data-types"
+            class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"
+              />
+            </svg>
+            Data Types
+          </a>
+          <a
+            href="#variables"
+            class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+              />
+            </svg>
+            Variables
+          </a>
+          <a
+            href="#control-flow"
+            class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 9l4-4 4 4m0 6l-4 4-4-4"
+              />
+            </svg>
+            Control Flow
+          </a>
+          <a
+            href="#functions"
+            class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+              />
+            </svg>
+            Functions
+          </a>
+          <a
+            href="#modules"
+            class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              />
+            </svg>
+            Modules
+          </a>
+          <a
+            href="#classes"
+            class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+              />
+            </svg>
+            Classes
+          </a>
+          <a
+            href="#exceptions"
+            class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            Exceptions
+          </a>
+          <a
+            href="#reference"
+            class="nav-item flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-700"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              />
+            </svg>
+            Reference
+          </a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:ml-72 min-h-full pt-16 lg:pt-4 pb-12">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Introduction -->
+        <section id="introduction" class="fade-in py-8">
+          <div
+            class="bg-gradient-to-br from-python-blue to-python-dark rounded-2xl p-8 md:p-12 text-white mb-8 card-hover shadow-xl"
+          >
+            <div class="flex items-center gap-2 mb-4">
+              <span
+                class="px-3 py-1 bg-python-yellow text-python-dark text-xs font-bold rounded-full"
+                >NEW</span
+              >
+              <span class="text-sm opacity-80">Python 3.12</span>
+            </div>
+            <h1
+              id="welcomeHeading"
+              class="text-3xl md:text-4xl font-extrabold mb-4"
+            >
+              Welcome to Python
+            </h1>
+            <p class="text-lg opacity-90 mb-6 leading-relaxed">
+              Python is a versatile, high-level programming language known for
+              its clear syntax and readability. Perfect for beginners and
+              powerful enough for experts.
+            </p>
+            <div class="flex flex-wrap gap-4">
+              <a
+                href="#hello-world"
+                id="ctaButton"
+                class="inline-flex items-center gap-2 px-6 py-3 bg-python-yellow text-python-dark font-bold rounded-xl hover:bg-yellow-300 transition-all transform hover:scale-105"
+              >
+                Start Learning Python
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+              </a>
+              <a
+                href="#reference"
+                class="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur font-medium rounded-xl hover:bg-white/30 transition-all"
+              >
+                View Reference
+              </a>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-4">
+            <div
+              class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-slate-700 card-hover"
+            >
+              <div
+                class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-4"
+              >
+                <svg
+                  class="w-5 h-5 text-python-blue"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+              </div>
+              <h3 class="font-bold text-gray-900 dark:text-white mb-2">
+                Easy to Learn
+              </h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                Simple syntax that emphasizes readability and reduces program
+                maintenance costs.
+              </p>
+            </div>
+            <div
+              class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-slate-700 card-hover"
+            >
+              <div
+                class="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center mb-4"
+              >
+                <svg
+                  class="w-5 h-5 text-python-yellow"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"
+                  />
+                </svg>
+              </div>
+              <h3 class="font-bold text-gray-900 dark:text-white mb-2">
+                Versatile
+              </h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                From web development to data science, AI, automation, and
+                beyond.
+              </p>
+            </div>
+            <div
+              class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-slate-700 card-hover"
+            >
+              <div
+                class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mb-4"
+              >
+                <svg
+                  class="w-5 h-5 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+              </div>
+              <h3 class="font-bold text-gray-900 dark:text-white mb-2">
+                Community
+              </h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                Massive community support with thousands of libraries and
+                frameworks.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Hello World -->
+        <section id="hello-world" class="fade-in py-8">
+          <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden"
+          >
+            <div
+              class="p-6 md:p-8 border-b border-gray-100 dark:border-slate-700"
+            >
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Hello World
+              </h2>
+              <p class="text-gray-600 dark:text-gray-400">
+                Your first Python program - the classic starting point for every
+                programmer.
+              </p>
+            </div>
+            <div class="p-6 md:p-8">
+              <div
+                class="code-block bg-slate-900 rounded-xl p-4 md:p-6 relative group"
+              >
+                <button
+                  onclick="copyCode(this)"
+                  class="copy-btn absolute top-4 right-4 p-2 bg-slate-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
+                <pre
+                  class="font-mono text-sm md:text-base"
+                ><code><span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-green-400">"Hello, World!"</span><span class="text-gray-300">)</span></code></pre>
+              </div>
+              <div class="mt-4 p-4 bg-gray-100 dark:bg-slate-700 rounded-xl">
+                <p
+                  class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2"
+                >
+                  Output
+                </p>
+                <p class="font-mono text-sm text-gray-800 dark:text-gray-200">
+                  Hello, World!
+                </p>
+              </div>
+              <div
+                class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800"
+              >
+                <div class="flex gap-3">
+                  <svg
+                    class="w-5 h-5 text-python-blue flex-shrink-0 mt-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <p class="text-sm text-gray-700 dark:text-gray-300">
+                    The
+                    <code
+                      class="px-1.5 py-0.5 bg-white dark:bg-slate-800 rounded text-python-blue font-mono text-xs"
+                      >print()</code
+                    >
+                    function outputs text to the console. It's one of the most
+                    commonly used functions in Python.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Data Types -->
+        <section id="data-types" class="fade-in py-8">
+          <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden"
+          >
+            <div
+              class="p-6 md:p-8 border-b border-gray-100 dark:border-slate-700"
+            >
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Data Types
+              </h2>
+              <p class="text-gray-600 dark:text-gray-400">
+                Python has several built-in data types for different kinds of
+                data.
+              </p>
+            </div>
+            <div class="p-6 md:p-8 space-y-6">
+              <div class="grid sm:grid-cols-2 gap-4">
+                <div
+                  class="p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl border border-gray-200 dark:border-slate-600"
+                >
+                  <span
+                    class="px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs font-bold rounded"
+                    >str</span
+                  >
+                  <p
+                    class="mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    String
+                  </p>
+                  <code
+                    class="text-xs text-gray-500 dark:text-gray-400 font-mono"
+                    >"Hello"</code
+                  >
+                </div>
+                <div
+                  class="p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl border border-gray-200 dark:border-slate-600"
+                >
+                  <span
+                    class="px-2 py-1 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 text-xs font-bold rounded"
+                    >int</span
+                  >
+                  <p
+                    class="mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Integer
+                  </p>
+                  <code
+                    class="text-xs text-gray-500 dark:text-gray-400 font-mono"
+                    >42</code
+                  >
+                </div>
+                <div
+                  class="p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl border border-gray-200 dark:border-slate-600"
+                >
+                  <span
+                    class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 text-xs font-bold rounded"
+                    >float</span
+                  >
+                  <p
+                    class="mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Float
+                  </p>
+                  <code
+                    class="text-xs text-gray-500 dark:text-gray-400 font-mono"
+                    >3.14</code
+                  >
+                </div>
+                <div
+                  class="p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl border border-gray-200 dark:border-slate-600"
+                >
+                  <span
+                    class="px-2 py-1 bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 text-xs font-bold rounded"
+                    >bool</span
+                  >
+                  <p
+                    class="mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Boolean
+                  </p>
+                  <code
+                    class="text-xs text-gray-500 dark:text-gray-400 font-mono"
+                    >True / False</code
+                  >
+                </div>
+                <div
+                  class="p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl border border-gray-200 dark:border-slate-600"
+                >
+                  <span
+                    class="px-2 py-1 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 text-xs font-bold rounded"
+                    >list</span
+                  >
+                  <p
+                    class="mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    List
+                  </p>
+                  <code
+                    class="text-xs text-gray-500 dark:text-gray-400 font-mono"
+                    >[1, 2, 3]</code
+                  >
+                </div>
+                <div
+                  class="p-4 bg-gray-50 dark:bg-slate-700/50 rounded-xl border border-gray-200 dark:border-slate-600"
+                >
+                  <span
+                    class="px-2 py-1 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 text-xs font-bold rounded"
+                    >dict</span
+                  >
+                  <p
+                    class="mt-2 text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Dictionary
+                  </p>
+                  <code
+                    class="text-xs text-gray-500 dark:text-gray-400 font-mono"
+                    >{"key": "value"}</code
+                  >
+                </div>
+              </div>
+              <div
+                class="code-block bg-slate-900 rounded-xl p-4 md:p-6 relative group"
+              >
+                <button
+                  onclick="copyCode(this)"
+                  class="copy-btn absolute top-4 right-4 p-2 bg-slate-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
+                <pre
+                  class="font-mono text-sm overflow-x-auto"
+                ><code><span class="text-gray-500"># Type checking with type()</span>
+<span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-cyan-400">type</span><span class="text-gray-300">(</span><span class="text-green-400">"Hello"</span><span class="text-gray-300">))</span>  <span class="text-gray-500"># &lt;class 'str'&gt;</span>
+<span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-cyan-400">type</span><span class="text-gray-300">(</span><span class="text-orange-400">42</span><span class="text-gray-300">))</span>       <span class="text-gray-500"># &lt;class 'int'&gt;</span>
+<span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-cyan-400">type</span><span class="text-gray-300">(</span><span class="text-orange-400">3.14</span><span class="text-gray-300">))</span>     <span class="text-gray-500"># &lt;class 'float'&gt;</span></code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Variables -->
+        <section id="variables" class="fade-in py-8">
+          <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden"
+          >
+            <div
+              class="p-6 md:p-8 border-b border-gray-100 dark:border-slate-700"
+            >
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Variables
+              </h2>
+              <p class="text-gray-600 dark:text-gray-400">
+                Variables store data values. Python has no command for declaring
+                a variable.
+              </p>
+            </div>
+            <div class="p-6 md:p-8">
+              <div
+                class="code-block bg-slate-900 rounded-xl p-4 md:p-6 relative group"
+              >
+                <button
+                  onclick="copyCode(this)"
+                  class="copy-btn absolute top-4 right-4 p-2 bg-slate-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
+                <pre
+                  class="font-mono text-sm overflow-x-auto"
+                ><code><span class="text-gray-500"># Variable assignment</span>
+<span class="text-blue-300">name</span> <span class="text-pink-400">=</span> <span class="text-green-400">"Python"</span>
+<span class="text-blue-300">version</span> <span class="text-pink-400">=</span> <span class="text-orange-400">3.12</span>
+<span class="text-blue-300">is_awesome</span> <span class="text-pink-400">=</span> <span class="text-purple-400">True</span>
+
+<span class="text-gray-500"># Multiple assignment</span>
+<span class="text-blue-300">x</span><span class="text-gray-300">,</span> <span class="text-blue-300">y</span><span class="text-gray-300">,</span> <span class="text-blue-300">z</span> <span class="text-pink-400">=</span> <span class="text-orange-400">1</span><span class="text-gray-300">,</span> <span class="text-orange-400">2</span><span class="text-gray-300">,</span> <span class="text-orange-400">3</span>
+
+<span class="text-gray-500"># f-strings for formatting</span>
+<span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-green-400">f"</span><span class="text-cyan-400">{</span><span class="text-blue-300">name</span><span class="text-cyan-400">}</span><span class="text-green-400"> </span><span class="text-cyan-400">{</span><span class="text-blue-300">version</span><span class="text-cyan-400">}</span><span class="text-green-400">"</span><span class="text-gray-300">)</span>  <span class="text-gray-500"># Python 3.12</span></code></pre>
+              </div>
+              <div class="mt-6 grid sm:grid-cols-2 gap-4">
+                <div
+                  class="p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800"
+                >
+                  <p
+                    class="text-sm font-semibold text-green-700 dark:text-green-400 mb-2"
+                  >
+                    ✓ Valid Names
+                  </p>
+                  <ul
+                    class="text-sm text-gray-600 dark:text-gray-400 space-y-1 font-mono"
+                  >
+                    <li>my_var</li>
+                    <li>_private</li>
+                    <li>camelCase</li>
+                  </ul>
+                </div>
+                <div
+                  class="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800"
+                >
+                  <p
+                    class="text-sm font-semibold text-red-700 dark:text-red-400 mb-2"
+                  >
+                    ✗ Invalid Names
+                  </p>
+                  <ul
+                    class="text-sm text-gray-600 dark:text-gray-400 space-y-1 font-mono"
+                  >
+                    <li>2var</li>
+                    <li>my-var</li>
+                    <li>class</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Control Flow -->
+        <section id="control-flow" class="fade-in py-8">
+          <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden"
+          >
+            <div
+              class="p-6 md:p-8 border-b border-gray-100 dark:border-slate-700"
+            >
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Control Flow
+              </h2>
+              <p class="text-gray-600 dark:text-gray-400">
+                Control the flow of your program with conditionals and loops.
+              </p>
+            </div>
+            <div class="p-6 md:p-8 space-y-6">
+              <div>
+                <h3
+                  class="text-lg font-semibold text-gray-900 dark:text-white mb-3"
+                >
+                  If Statements
+                </h3>
+                <div
+                  class="code-block bg-slate-900 rounded-xl p-4 md:p-6 relative group"
+                >
+                  <button
+                    onclick="copyCode(this)"
+                    class="copy-btn absolute top-4 right-4 p-2 bg-slate-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <svg
+                      class="w-4 h-4 text-gray-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </button>
+                  <pre
+                    class="font-mono text-sm overflow-x-auto"
+                  ><code><span class="text-blue-300">age</span> <span class="text-pink-400">=</span> <span class="text-orange-400">18</span>
+
+<span class="text-purple-400">if</span> <span class="text-blue-300">age</span> <span class="text-pink-400">&gt;=</span> <span class="text-orange-400">18</span><span class="text-gray-300">:</span>
+    <span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-green-400">"Adult"</span><span class="text-gray-300">)</span>
+<span class="text-purple-400">elif</span> <span class="text-blue-300">age</span> <span class="text-pink-400">&gt;=</span> <span class="text-orange-400">13</span><span class="text-gray-300">:</span>
+    <span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-green-400">"Teenager"</span><span class="text-gray-300">)</span>
+<span class="text-purple-400">else</span><span class="text-gray-300">:</span>
+    <span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-green-400">"Child"</span><span class="text-gray-300">)</span></code></pre>
+                </div>
+              </div>
+              <div>
+                <h3
+                  class="text-lg font-semibold text-gray-900 dark:text-white mb-3"
+                >
+                  For Loops
+                </h3>
+                <div
+                  class="code-block bg-slate-900 rounded-xl p-4 md:p-6 relative group"
+                >
+                  <button
+                    onclick="copyCode(this)"
+                    class="copy-btn absolute top-4 right-4 p-2 bg-slate-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <svg
+                      class="w-4 h-4 text-gray-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </button>
+                  <pre
+                    class="font-mono text-sm overflow-x-auto"
+                  ><code><span class="text-gray-500"># Loop through a list</span>
+<span class="text-blue-300">fruits</span> <span class="text-pink-400">=</span> <span class="text-gray-300">[</span><span class="text-green-400">"apple"</span><span class="text-gray-300">,</span> <span class="text-green-400">"banana"</span><span class="text-gray-300">,</span> <span class="text-green-400">"cherry"</span><span class="text-gray-300">]</span>
+
+<span class="text-purple-400">for</span> <span class="text-blue-300">fruit</span> <span class="text-purple-400">in</span> <span class="text-blue-300">fruits</span><span class="text-gray-300">:</span>
+    <span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-blue-300">fruit</span><span class="text-gray-300">)</span>
+
+<span class="text-gray-500"># Loop with range</span>
+<span class="text-purple-400">for</span> <span class="text-blue-300">i</span> <span class="text-purple-400">in</span> <span class="text-cyan-400">range</span><span class="text-gray-300">(</span><span class="text-orange-400">5</span><span class="text-gray-300">):</span>
+    <span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-blue-300">i</span><span class="text-gray-300">)</span>  <span class="text-gray-500"># 0, 1, 2, 3, 4</span></code></pre>
+                </div>
+              </div>
+              <div>
+                <h3
+                  class="text-lg font-semibold text-gray-900 dark:text-white mb-3"
+                >
+                  While Loops
+                </h3>
+                <div
+                  class="code-block bg-slate-900 rounded-xl p-4 md:p-6 relative group"
+                >
+                  <button
+                    onclick="copyCode(this)"
+                    class="copy-btn absolute top-4 right-4 p-2 bg-slate-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <svg
+                      class="w-4 h-4 text-gray-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </button>
+                  <pre
+                    class="font-mono text-sm overflow-x-auto"
+                  ><code><span class="text-blue-300">count</span> <span class="text-pink-400">=</span> <span class="text-orange-400">0</span>
+
+<span class="text-purple-400">while</span> <span class="text-blue-300">count</span> <span class="text-pink-400">&lt;</span> <span class="text-orange-400">5</span><span class="text-gray-300">:</span>
+    <span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-blue-300">count</span><span class="text-gray-300">)</span>
+    <span class="text-blue-300">count</span> <span class="text-pink-400">+=</span> <span class="text-orange-400">1</span></code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Functions -->
+        <section id="functions" class="fade-in py-8">
+          <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden"
+          >
+            <div
+              class="p-6 md:p-8 border-b border-gray-100 dark:border-slate-700"
+            >
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Functions
+              </h2>
+              <p class="text-gray-600 dark:text-gray-400">
+                Functions are reusable blocks of code that perform specific
+                tasks.
+              </p>
+            </div>
+            <div class="p-6 md:p-8 space-y-6">
+              <div
+                class="code-block bg-slate-900 rounded-xl p-4 md:p-6 relative group"
+              >
+                <button
+                  onclick="copyCode(this)"
+                  class="copy-btn absolute top-4 right-4 p-2 bg-slate-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
+                <pre
+                  class="font-mono text-sm overflow-x-auto"
+                ><code><span class="text-gray-500"># Basic function</span>
+<span class="text-purple-400">def</span> <span class="text-yellow-400">greet</span><span class="text-gray-300">(</span><span class="text-blue-300">name</span><span class="text-gray-300">):</span>
+    <span class="text-purple-400">return</span> <span class="text-green-400">f"Hello, </span><span class="text-cyan-400">{</span><span class="text-blue-300">name</span><span class="text-cyan-400">}</span><span class="text-green-400">!"</span>
+
+<span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-yellow-400">greet</span><span class="text-gray-300">(</span><span class="text-green-400">"Python"</span><span class="text-gray-300">))</span>  <span class="text-gray-500"># Hello, Python!</span>
+
+<span class="text-gray-500"># Default parameters</span>
+<span class="text-purple-400">def</span> <span class="text-yellow-400">power</span><span class="text-gray-300">(</span><span class="text-blue-300">base</span><span class="text-gray-300">,</span> <span class="text-blue-300">exp</span><span class="text-pink-400">=</span><span class="text-orange-400">2</span><span class="text-gray-300">):</span>
+    <span class="text-purple-400">return</span> <span class="text-blue-300">base</span> <span class="text-pink-400">**</span> <span class="text-blue-300">exp</span>
+
+<span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-yellow-400">power</span><span class="text-gray-300">(</span><span class="text-orange-400">3</span><span class="text-gray-300">))</span>     <span class="text-gray-500"># 9</span>
+<span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-yellow-400">power</span><span class="text-gray-300">(</span><span class="text-orange-400">2</span><span class="text-gray-300">,</span> <span class="text-orange-400">3</span><span class="text-gray-300">))</span>  <span class="text-gray-500"># 8</span>
+
+<span class="text-gray-500"># Lambda functions</span>
+<span class="text-blue-300">square</span> <span class="text-pink-400">=</span> <span class="text-purple-400">lambda</span> <span class="text-blue-300">x</span><span class="text-gray-300">:</span> <span class="text-blue-300">x</span> <span class="text-pink-400">**</span> <span class="text-orange-400">2</span>
+<span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-blue-300">square</span><span class="text-gray-300">(</span><span class="text-orange-400">5</span><span class="text-gray-300">))</span>    <span class="text-gray-500"># 25</span></code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Modules -->
+        <section id="modules" class="fade-in py-8">
+          <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden"
+          >
+            <div
+              class="p-6 md:p-8 border-b border-gray-100 dark:border-slate-700"
+            >
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Modules
+              </h2>
+              <p class="text-gray-600 dark:text-gray-400">
+                Modules let you organize and reuse code across different files.
+              </p>
+            </div>
+            <div class="p-6 md:p-8 space-y-6">
+              <div
+                class="code-block bg-slate-900 rounded-xl p-4 md:p-6 relative group"
+              >
+                <button
+                  onclick="copyCode(this)"
+                  class="copy-btn absolute top-4 right-4 p-2 bg-slate-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
+                <pre
+                  class="font-mono text-sm overflow-x-auto"
+                ><code><span class="text-gray-500"># Import entire module</span>
+<span class="text-purple-400">import</span> <span class="text-blue-300">math</span>
+<span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-blue-300">math</span><span class="text-gray-300">.</span><span class="text-cyan-400">sqrt</span><span class="text-gray-300">(</span><span class="text-orange-400">16</span><span class="text-gray-300">))</span>  <span class="text-gray-500"># 4.0</span>
+
+<span class="text-gray-500"># Import specific function</span>
+<span class="text-purple-400">from</span> <span class="text-blue-300">random</span> <span class="text-purple-400">import</span> <span class="text-cyan-400">randint</span>
+<span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-cyan-400">randint</span><span class="text-gray-300">(</span><span class="text-orange-400">1</span><span class="text-gray-300">,</span> <span class="text-orange-400">10</span><span class="text-gray-300">))</span>
+
+<span class="text-gray-500"># Import with alias</span>
+<span class="text-purple-400">import</span> <span class="text-blue-300">datetime</span> <span class="text-purple-400">as</span> <span class="text-blue-300">dt</span>
+<span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-blue-300">dt</span><span class="text-gray-300">.</span><span class="text-cyan-400">date</span><span class="text-gray-300">.</span><span class="text-cyan-400">today</span><span class="text-gray-300">())</span></code></pre>
+              </div>
+              <div class="grid sm:grid-cols-3 gap-3">
+                <div
+                  class="p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg text-center"
+                >
+                  <code
+                    class="text-sm font-mono text-python-blue dark:text-python-yellow"
+                    >os</code
+                  >
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Operating System
+                  </p>
+                </div>
+                <div
+                  class="p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg text-center"
+                >
+                  <code
+                    class="text-sm font-mono text-python-blue dark:text-python-yellow"
+                    >json</code
+                  >
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    JSON Parser
+                  </p>
+                </div>
+                <div
+                  class="p-3 bg-gray-50 dark:bg-slate-700/50 rounded-lg text-center"
+                >
+                  <code
+                    class="text-sm font-mono text-python-blue dark:text-python-yellow"
+                    >re</code
+                  >
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Regular Expressions
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Classes -->
+        <section id="classes" class="fade-in py-8">
+          <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden"
+          >
+            <div
+              class="p-6 md:p-8 border-b border-gray-100 dark:border-slate-700"
+            >
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Classes
+              </h2>
+              <p class="text-gray-600 dark:text-gray-400">
+                Object-oriented programming with classes and objects.
+              </p>
+            </div>
+            <div class="p-6 md:p-8">
+              <div
+                class="code-block bg-slate-900 rounded-xl p-4 md:p-6 relative group"
+              >
+                <button
+                  onclick="copyCode(this)"
+                  class="copy-btn absolute top-4 right-4 p-2 bg-slate-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
+                <pre
+                  class="font-mono text-sm overflow-x-auto"
+                ><code><span class="text-purple-400">class</span> <span class="text-yellow-400">Dog</span><span class="text-gray-300">:</span>
+    <span class="text-purple-400">def</span> <span class="text-yellow-400">__init__</span><span class="text-gray-300">(</span><span class="text-red-400">self</span><span class="text-gray-300">,</span> <span class="text-blue-300">name</span><span class="text-gray-300">,</span> <span class="text-blue-300">breed</span><span class="text-gray-300">):</span>
+        <span class="text-red-400">self</span><span class="text-gray-300">.</span><span class="text-blue-300">name</span> <span class="text-pink-400">=</span> <span class="text-blue-300">name</span>
+        <span class="text-red-400">self</span><span class="text-gray-300">.</span><span class="text-blue-300">breed</span> <span class="text-pink-400">=</span> <span class="text-blue-300">breed</span>
+    
+    <span class="text-purple-400">def</span> <span class="text-yellow-400">bark</span><span class="text-gray-300">(</span><span class="text-red-400">self</span><span class="text-gray-300">):</span>
+        <span class="text-purple-400">return</span> <span class="text-green-400">f"</span><span class="text-cyan-400">{</span><span class="text-red-400">self</span><span class="text-gray-300">.</span><span class="text-blue-300">name</span><span class="text-cyan-400">}</span><span class="text-green-400"> says Woof!"</span>
+    
+    <span class="text-purple-400">def</span> <span class="text-yellow-400">__str__</span><span class="text-gray-300">(</span><span class="text-red-400">self</span><span class="text-gray-300">):</span>
+        <span class="text-purple-400">return</span> <span class="text-green-400">f"</span><span class="text-cyan-400">{</span><span class="text-red-400">self</span><span class="text-gray-300">.</span><span class="text-blue-300">name</span><span class="text-cyan-400">}</span><span class="text-green-400"> the </span><span class="text-cyan-400">{</span><span class="text-red-400">self</span><span class="text-gray-300">.</span><span class="text-blue-300">breed</span><span class="text-cyan-400">}</span><span class="text-green-400">"</span>
+
+<span class="text-gray-500"># Create an instance</span>
+<span class="text-blue-300">my_dog</span> <span class="text-pink-400">=</span> <span class="text-yellow-400">Dog</span><span class="text-gray-300">(</span><span class="text-green-400">"Buddy"</span><span class="text-gray-300">,</span> <span class="text-green-400">"Golden Retriever"</span><span class="text-gray-300">)</span>
+<span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-blue-300">my_dog</span><span class="text-gray-300">.</span><span class="text-cyan-400">bark</span><span class="text-gray-300">())</span>  <span class="text-gray-500"># Buddy says Woof!</span></code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Exceptions -->
+        <section id="exceptions" class="fade-in py-8">
+          <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden"
+          >
+            <div
+              class="p-6 md:p-8 border-b border-gray-100 dark:border-slate-700"
+            >
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Exceptions
+              </h2>
+              <p class="text-gray-600 dark:text-gray-400">
+                Handle errors gracefully with try-except blocks.
+              </p>
+            </div>
+            <div class="p-6 md:p-8">
+              <div
+                class="code-block bg-slate-900 rounded-xl p-4 md:p-6 relative group"
+              >
+                <button
+                  onclick="copyCode(this)"
+                  class="copy-btn absolute top-4 right-4 p-2 bg-slate-700 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <svg
+                    class="w-4 h-4 text-gray-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                </button>
+                <pre
+                  class="font-mono text-sm overflow-x-auto"
+                ><code><span class="text-purple-400">try</span><span class="text-gray-300">:</span>
+    <span class="text-blue-300">result</span> <span class="text-pink-400">=</span> <span class="text-orange-400">10</span> <span class="text-pink-400">/</span> <span class="text-orange-400">0</span>
+<span class="text-purple-400">except</span> <span class="text-yellow-400">ZeroDivisionError</span><span class="text-gray-300">:</span>
+    <span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-green-400">"Cannot divide by zero!"</span><span class="text-gray-300">)</span>
+<span class="text-purple-400">except</span> <span class="text-yellow-400">Exception</span> <span class="text-purple-400">as</span> <span class="text-blue-300">e</span><span class="text-gray-300">:</span>
+    <span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-green-400">f"Error: </span><span class="text-cyan-400">{</span><span class="text-blue-300">e</span><span class="text-cyan-400">}</span><span class="text-green-400">"</span><span class="text-gray-300">)</span>
+<span class="text-purple-400">else</span><span class="text-gray-300">:</span>
+    <span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-green-400">"Success!"</span><span class="text-gray-300">)</span>
+<span class="text-purple-400">finally</span><span class="text-gray-300">:</span>
+    <span class="text-purple-400">print</span><span class="text-gray-300">(</span><span class="text-green-400">"Always runs"</span><span class="text-gray-300">)</span>
+
+<span class="text-gray-500"># Raise custom exception</span>
+<span class="text-purple-400">def</span> <span class="text-yellow-400">validate_age</span><span class="text-gray-300">(</span><span class="text-blue-300">age</span><span class="text-gray-300">):</span>
+    <span class="text-purple-400">if</span> <span class="text-blue-300">age</span> <span class="text-pink-400">&lt;</span> <span class="text-orange-400">0</span><span class="text-gray-300">:</span>
+        <span class="text-purple-400">raise</span> <span class="text-yellow-400">ValueError</span><span class="text-gray-300">(</span><span class="text-green-400">"Age cannot be negative"</span><span class="text-gray-300">)</span>
+    <span class="text-purple-400">return</span> <span class="text-purple-400">True</span></code></pre>
+              </div>
+              <div class="mt-6 grid sm:grid-cols-2 gap-4">
+                <div
+                  class="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800"
+                >
+                  <p
+                    class="text-sm font-semibold text-red-700 dark:text-red-400 mb-2"
+                  >
+                    Common Exceptions
+                  </p>
+                  <ul
+                    class="text-sm text-gray-600 dark:text-gray-400 space-y-1 font-mono"
+                  >
+                    <li>ValueError</li>
+                    <li>TypeError</li>
+                    <li>KeyError</li>
+                    <li>IndexError</li>
+                  </ul>
+                </div>
+                <div
+                  class="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800"
+                >
+                  <p
+                    class="text-sm font-semibold text-yellow-700 dark:text-yellow-400 mb-2"
+                  >
+                    💡 Best Practice
+                  </p>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    Always catch specific exceptions rather than using bare
+                    <code class="bg-white dark:bg-slate-800 px-1 rounded"
+                      >except:</code
+                    >
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Reference -->
+        <section id="reference" class="fade-in py-8">
+          <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden"
+          >
+            <div
+              class="p-6 md:p-8 border-b border-gray-100 dark:border-slate-700"
+            >
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Reference
+              </h2>
+              <p class="text-gray-600 dark:text-gray-400">
+                Useful resources for continuing your Python journey.
+              </p>
+            </div>
+            <div class="p-6 md:p-8">
+              <div class="grid sm:grid-cols-2 gap-4">
+                <a
+                  href="https://docs.python.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group p-5 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-800 hover:shadow-lg transition-all"
+                >
+                  <div class="flex items-center gap-3 mb-3">
+                    <div
+                      class="w-10 h-10 bg-python-blue rounded-lg flex items-center justify-center"
+                    >
+                      <svg
+                        class="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                        />
+                      </svg>
+                    </div>
+                    <span
+                      class="font-bold text-gray-900 dark:text-white group-hover:text-python-blue dark:group-hover:text-python-yellow transition-colors"
+                      >Official Docs</span
+                    >
+                  </div>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    The complete Python documentation and tutorial.
+                  </p>
+                </a>
+                <a
+                  href="https://pypi.org"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group p-5 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl border border-yellow-200 dark:border-yellow-800 hover:shadow-lg transition-all"
+                >
+                  <div class="flex items-center gap-3 mb-3">
+                    <div
+                      class="w-10 h-10 bg-python-yellow rounded-lg flex items-center justify-center"
+                    >
+                      <svg
+                        class="w-5 h-5 text-python-dark"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                        />
+                      </svg>
+                    </div>
+                    <span
+                      class="font-bold text-gray-900 dark:text-white group-hover:text-python-blue dark:group-hover:text-python-yellow transition-colors"
+                      >PyPI</span
+                    >
+                  </div>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    Python Package Index with 400,000+ packages.
+                  </p>
+                </a>
+                <a
+                  href="https://realpython.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group p-5 bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-xl border border-green-200 dark:border-green-800 hover:shadow-lg transition-all"
+                >
+                  <div class="flex items-center gap-3 mb-3">
+                    <div
+                      class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center"
+                    >
+                      <svg
+                        class="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                    <span
+                      class="font-bold text-gray-900 dark:text-white group-hover:text-python-blue dark:group-hover:text-python-yellow transition-colors"
+                      >Real Python</span
+                    >
+                  </div>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    Tutorials, articles, and guides for all levels.
+                  </p>
+                </a>
+                <a
+                  href="https://stackoverflow.com/questions/tagged/python"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="group p-5 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl border border-orange-200 dark:border-orange-800 hover:shadow-lg transition-all"
+                >
+                  <div class="flex items-center gap-3 mb-3">
+                    <div
+                      class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center"
+                    >
+                      <svg
+                        class="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <span
+                      class="font-bold text-gray-900 dark:text-white group-hover:text-python-blue dark:group-hover:text-python-yellow transition-colors"
+                      >Stack Overflow</span
+                    >
+                  </div>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                    Community Q&A for Python problems.
+                  </p>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Footer -->
+        <footer
+          class="py-8 mt-8 border-t border-gray-200 dark:border-slate-700"
+        >
+          <div class="text-center">
+            <div class="flex items-center justify-center gap-2 mb-4">
+              <svg class="w-6 h-6" viewBox="0 0 256 255" fill="none">
+                <path
+                  d="M126.916.072c-64.832 0-60.784 28.115-60.784 28.115l.072 29.128h61.868v8.745H41.631S.145 61.355.145 126.77c0 65.417 36.21 63.097 36.21 63.097h21.61v-30.356s-1.165-36.21 35.632-36.21h61.362s34.475.557 34.475-33.319V33.97S194.67.072 126.916.072z"
+                  fill="#306998"
+                />
+                <path
+                  d="M128.757 254.126c64.832 0 60.784-28.115 60.784-28.115l-.072-29.127H127.6v-8.746h86.441s41.486 4.705 41.486-60.712c0-65.416-36.21-63.096-36.21-63.096h-21.61v30.355s1.165 36.21-35.632 36.21h-61.362s-34.475-.557-34.475 33.32v56.013s-5.235 33.897 62.518 33.897z"
+                  fill="#FFD43B"
+                />
+              </svg>
+              <span class="font-bold text-gray-900 dark:text-white"
+                >Python Documentation</span
+              >
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Built with 💙 for Python learners everywhere
+            </p>
+          </div>
+        </footer>
+      </div>
+    </main>
+
+    <script>
+      // Default configuration
+      const defaultConfig = {
+        site_title: "Python Docs",
+        welcome_heading: "Welcome to Python",
+        cta_button_text: "Start Learning Python",
+        background_color: "#f9fafb",
+        surface_color: "#ffffff",
+        text_color: "#1f2937",
+        primary_action_color: "#306998",
+        secondary_action_color: "#FFD43B",
+      };
+
+      // Initialize Elements SDK
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => {
+            // Update site title
+            const siteTitle = document.getElementById("siteTitle");
+            const mobileSiteTitle = document.getElementById("mobileSiteTitle");
+            if (siteTitle)
+              siteTitle.textContent =
+                config.site_title || defaultConfig.site_title;
+            if (mobileSiteTitle)
+              mobileSiteTitle.textContent =
+                config.site_title || defaultConfig.site_title;
+
+            // Update welcome heading
+            const welcomeHeading = document.getElementById("welcomeHeading");
+            if (welcomeHeading)
+              welcomeHeading.textContent =
+                config.welcome_heading || defaultConfig.welcome_heading;
+
+            // Update CTA button
+            const ctaButton = document.getElementById("ctaButton");
+            if (ctaButton) {
+              ctaButton.childNodes[0].textContent =
+                config.cta_button_text || defaultConfig.cta_button_text;
+            }
+
+            // Update colors
+            document.documentElement.style.setProperty(
+              "--bg-color",
+              config.background_color || defaultConfig.background_color,
+            );
+            document.documentElement.style.setProperty(
+              "--surface-color",
+              config.surface_color || defaultConfig.surface_color,
+            );
+            document.documentElement.style.setProperty(
+              "--text-color",
+              config.text_color || defaultConfig.text_color,
+            );
+            document.documentElement.style.setProperty(
+              "--primary-color",
+              config.primary_action_color || defaultConfig.primary_action_color,
+            );
+            document.documentElement.style.setProperty(
+              "--secondary-color",
+              config.secondary_action_color ||
+                defaultConfig.secondary_action_color,
+            );
+          },
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              {
+                get: () =>
+                  config.background_color || defaultConfig.background_color,
+                set: (value) =>
+                  window.elementSdk.setConfig({ background_color: value }),
+              },
+              {
+                get: () => config.surface_color || defaultConfig.surface_color,
+                set: (value) =>
+                  window.elementSdk.setConfig({ surface_color: value }),
+              },
+              {
+                get: () => config.text_color || defaultConfig.text_color,
+                set: (value) =>
+                  window.elementSdk.setConfig({ text_color: value }),
+              },
+              {
+                get: () =>
+                  config.primary_action_color ||
+                  defaultConfig.primary_action_color,
+                set: (value) =>
+                  window.elementSdk.setConfig({ primary_action_color: value }),
+              },
+              {
+                get: () =>
+                  config.secondary_action_color ||
+                  defaultConfig.secondary_action_color,
+                set: (value) =>
+                  window.elementSdk.setConfig({
+                    secondary_action_color: value,
+                  }),
+              },
+            ],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined,
+          }),
+          mapToEditPanelValues: (config) =>
+            new Map([
+              ["site_title", config.site_title || defaultConfig.site_title],
+              [
+                "welcome_heading",
+                config.welcome_heading || defaultConfig.welcome_heading,
+              ],
+              [
+                "cta_button_text",
+                config.cta_button_text || defaultConfig.cta_button_text,
+              ],
+            ]),
+        });
+      }
+
+      // Mobile menu functionality
+      const hamburgerBtn = document.getElementById("hamburgerBtn");
+      const sidebar = document.getElementById("sidebar");
+      const sidebarOverlay = document.getElementById("sidebarOverlay");
+
+      function toggleMobileMenu() {
+        hamburgerBtn.classList.toggle("menu-open");
+        sidebar.classList.toggle("open");
+        sidebarOverlay.classList.toggle("opacity-0");
+        sidebarOverlay.classList.toggle("pointer-events-none");
+      }
+
+      hamburgerBtn.addEventListener("click", toggleMobileMenu);
+      sidebarOverlay.addEventListener("click", toggleMobileMenu);
+
+      // Close mobile menu when clicking nav links
+      document.querySelectorAll("#navigation a").forEach((link) => {
+        link.addEventListener("click", () => {
+          if (window.innerWidth < 1024) {
+            toggleMobileMenu();
+          }
+        });
+      });
+
+      // Dark mode toggle
+      const themeToggleDesktop = document.getElementById("themeToggleDesktop");
+      const themeToggleMobile = document.getElementById("themeToggleMobile");
+
+      function toggleDarkMode() {
+        document.documentElement.classList.toggle("dark");
+        localStorage.setItem(
+          "darkMode",
+          document.documentElement.classList.contains("dark"),
+        );
+      }
+
+      themeToggleDesktop.addEventListener("click", toggleDarkMode);
+      themeToggleMobile.addEventListener("click", toggleDarkMode);
+
+      // Load saved theme preference
+      if (localStorage.getItem("darkMode") === "true") {
+        document.documentElement.classList.add("dark");
+      }
+
+      // Progress bar
+      function updateProgressBar() {
+        const scrollTop = window.scrollY;
+        const docHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
+        const progress = (scrollTop / docHeight) * 100;
+        document.getElementById("progressBar").style.width = progress + "%";
+      }
+
+      window.addEventListener("scroll", updateProgressBar);
+
+      // Intersection Observer for fade-in animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+          }
+        });
+      }, observerOptions);
+
+      document
+        .querySelectorAll(".fade-in")
+        .forEach((el) => observer.observe(el));
+
+      // Active navigation tracking
+      const sections = document.querySelectorAll("section[id]");
+      const navLinks = document.querySelectorAll("#navigation a");
+
+      function updateActiveNav() {
+        const scrollPos = window.scrollY + 150;
+
+        sections.forEach((section) => {
+          const top = section.offsetTop;
+          const bottom = top + section.offsetHeight;
+          const id = section.getAttribute("id");
+
+          if (scrollPos >= top && scrollPos < bottom) {
+            navLinks.forEach((link) => {
+              link.classList.remove(
+                "active",
+                "text-python-blue",
+                "dark:text-python-yellow",
+                "bg-blue-50",
+                "dark:bg-slate-700",
+              );
+              link.classList.add("text-gray-600", "dark:text-gray-300");
+
+              if (link.getAttribute("href") === "#" + id) {
+                link.classList.add(
+                  "active",
+                  "text-python-blue",
+                  "dark:text-python-yellow",
+                  "bg-blue-50",
+                  "dark:bg-slate-700",
+                );
+                link.classList.remove("text-gray-600", "dark:text-gray-300");
+              }
+            });
+          }
+        });
+      }
+
+      window.addEventListener("scroll", updateActiveNav);
+
+      // Search functionality
+      const searchInput = document.getElementById("searchInput");
+
+      searchInput.addEventListener("input", (e) => {
+        const query = e.target.value.toLowerCase();
+
+        navLinks.forEach((link) => {
+          const text = link.textContent.toLowerCase();
+          if (query === "" || text.includes(query)) {
+            link.style.display = "flex";
+          } else {
+            link.style.display = "none";
+          }
+        });
+      });
+
+      // Copy code functionality
+      function copyCode(button) {
+        const codeBlock = button.closest(".code-block");
+        const code = codeBlock.querySelector("code").textContent;
+
+        navigator.clipboard.writeText(code).then(() => {
+          const originalHTML = button.innerHTML;
+          button.innerHTML =
+            '<svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+          button.classList.add("bg-green-600");
+
+          setTimeout(() => {
+            button.innerHTML = originalHTML;
+            button.classList.remove("bg-green-600");
+          }, 2000);
+        });
+      }
+
+      // Initialize
+      updateProgressBar();
+      updateActiveNav();
+    </script>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement("script");
+            d.innerHTML =
+              "window.__CF$cv$params={r:'9cfb812fb44d7eb8',t:'MTc3MTM5NjUyOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName("head")[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement("iframe");
+          a.height = 1;
+          a.width = 1;
+          a.style.position = "absolute";
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = "none";
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+          if ("loading" !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener("DOMContentLoaded", c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              "loading" !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>
